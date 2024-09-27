@@ -460,6 +460,7 @@ class Postgres(Dialect):
         TABLESAMPLE_SIZE_IS_ROWS = False
         TABLESAMPLE_SEED_KEYWORD = "REPEATABLE"
         SUPPORTS_SELECT_INTO = True
+        JSON_KEY_VALUE_PAIR_SEP = ","
         JSON_TYPE_REQUIRED_FOR_EXTRACTION = True
         SUPPORTS_UNLOGGED_TABLES = True
         LIKE_PROPERTY_INSIDE_SCHEMA = True
@@ -512,6 +513,7 @@ class Postgres(Dialect):
             exp.JSONBExtractScalar: lambda self, e: self.binary(e, "#>>"),
             exp.JSONBContains: lambda self, e: self.binary(e, "?"),
             exp.ParseJSON: lambda self, e: self.sql(exp.cast(e.this, exp.DataType.Type.JSON)),
+            exp.JSONObject: lambda self, e: self.func("JSON_BUILD_OBJECT", *e.expressions),
             exp.JSONPathKey: json_path_key_only_name,
             exp.JSONPathRoot: lambda *_: "",
             exp.JSONPathSubscript: lambda self, e: self.json_path_part(e.this),
