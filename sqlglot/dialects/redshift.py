@@ -156,6 +156,7 @@ class Redshift(Postgres):
         ARRAY_CONCAT_IS_VAR_LEN = False
         SUPPORTS_CONVERT_TIMEZONE = True
         EXCEPT_INTERSECT_SUPPORT_ALL_CLAUSE = False
+        JSON_KEY_VALUE_PAIR_SEP = ","
 
         # Redshift doesn't have `WITH` as part of their with_properties so we remove it
         WITH_PROPERTIES_PREFIX = " "
@@ -188,6 +189,7 @@ class Redshift(Postgres):
             exp.GeneratedAsIdentityColumnConstraint: generatedasidentitycolumnconstraint_sql,
             exp.JSONExtract: json_extract_segments("JSON_EXTRACT_PATH_TEXT"),
             exp.JSONExtractScalar: json_extract_segments("JSON_EXTRACT_PATH_TEXT"),
+            exp.JSONObject: lambda self, e: self.func("OBJECT", *e.expressions),
             exp.GroupConcat: rename_func("LISTAGG"),
             exp.Hex: lambda self, e: self.func("UPPER", self.func("TO_HEX", self.sql(e, "this"))),
             exp.Select: transforms.preprocess(
